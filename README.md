@@ -8,6 +8,8 @@ largely inspired by https://github.com/evanw/csg.js
 ```javascript
 var subjectPolygon = CSG.fromPolygons([[10, 10], [100, 10], [50, 140]]);
 var clipPolygon = CSG.fromPolygons([[10, 100], [50, 10], [100, 100]]);
+// note: this syntax is also accepted
+// var clipPolygon = CSG.fromPolygons({x:10, y:100}, {x:50, y:10}, {x:100, y:100}]);
 
 var subtractPolygons = subjectPolygon.subtract(clipPolygon).toPolygons();
 var unionPolygons = subjectPolygon.union(clipPolygon).toPolygons();
