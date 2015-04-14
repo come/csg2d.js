@@ -21,20 +21,6 @@ var area = function(polygon) {
     return a * 0.5;
 };
 
-// var toCSGPolygons = function(polygons) {
-//     var csgPolygons = [];
-//     var n = new CSG.Vector(0, 1);
-//     for (var i = 0; i < polygons.length; i++) {
-//         var csgPolygonsPoints = [];
-//         for (var j = 0; j < polygons[i].length; j++) {
-//             csgPolygonsPoints.push(new CSG.Vertex(new CSG.Vector(polygons[i][j][0], polygons[i][j][1]), n));
-//         }
-//         var poly = new CSG.Polygon(csgPolygonsPoints, {});
-//         csgPolygons.push(poly);
-//     }
-//     return CSG.fromPolygons(csgPolygons);
-// }
-
 function drawPolygon(context, polygon, strokeStyle, fillStyle) {
     var a = area(polygon);
     if (a < 0) { // polygon is reversed (it is a hole)
@@ -57,9 +43,6 @@ function drawPolygon(context, polygon, strokeStyle, fillStyle) {
 }
 
 var load = function() {
-    // var subjectPolygon = [[120, 10], [140, 10], [180, 10], [180, 20], [180, 200], [160, 200], [160, 20], [140, 20], [140, 400], [120, 400]],
-    //     clipPolygon = [[100, 100], [300, 100], [300, 300], [100, 300]];
-
     var subjectPolygon = [
         [10, 10],
         [100, 10],
@@ -95,9 +78,6 @@ var load = function() {
 
     var clippedPolygon = csgSubject.union(csgClip);
     clippedPolygon = csgSubject.union(csgClip3);
-    // clippedPolygon = clippedPolygon.subtract(csgClip2);
-    // clippedPolygon = clippedPolygon.union(csgClip);
-
     clippedPolygon = clippedPolygon.subtract(csgClip2);
     clippedPolygon = clippedPolygon.union(csgClip4);
 
