@@ -6,8 +6,8 @@
 // 
 // Example usage:
 // 
-//     var subjectPolygon = [[10, 10], [100, 10], [50, 140]];
-//     var clipPolygon = [[10, 100], [50, 10], [100, 100]];
+//     var subjectPolygon = CSG.fromPolygons([[10, 10], [100, 10], [50, 140]]);
+//     var clipPolygon = CSG.fromPolygons([[10, 100], [50, 10], [100, 100]]);
 //     var polygons = subjectPolygon.subtract(clipPolygon).toPolygons();
 // 
 // ## Implementation Details
