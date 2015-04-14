@@ -21,19 +21,19 @@ var area = function(polygon) {
     return a * 0.5;
 };
 
-var toCSGPolygons = function(polygons) {
-    var csgPolygons = [];
-    var n = new CSG.Vector(0, 1);
-    for (var i = 0; i < polygons.length; i++) {
-        var csgPolygonsPoints = [];
-        for (var j = 0; j < polygons[i].length; j++) {
-            csgPolygonsPoints.push(new CSG.Vertex(new CSG.Vector(polygons[i][j][0], polygons[i][j][1]), n));
-        }
-        var poly = new CSG.Polygon(csgPolygonsPoints, {});
-        csgPolygons.push(poly);
-    }
-    return CSG.fromPolygons(csgPolygons);
-}
+// var toCSGPolygons = function(polygons) {
+//     var csgPolygons = [];
+//     var n = new CSG.Vector(0, 1);
+//     for (var i = 0; i < polygons.length; i++) {
+//         var csgPolygonsPoints = [];
+//         for (var j = 0; j < polygons[i].length; j++) {
+//             csgPolygonsPoints.push(new CSG.Vertex(new CSG.Vector(polygons[i][j][0], polygons[i][j][1]), n));
+//         }
+//         var poly = new CSG.Polygon(csgPolygonsPoints, {});
+//         csgPolygons.push(poly);
+//     }
+//     return CSG.fromPolygons(csgPolygons);
+// }
 
 function drawPolygon(context, polygon, strokeStyle, fillStyle) {
     var a = area(polygon);
@@ -87,11 +87,11 @@ var load = function() {
         [0, 50]
     ];
 
-    var csgSubject = toCSGPolygons([subjectPolygon]);
-    var csgClip = toCSGPolygons([clipPolygon]);
-    var csgClip2 = toCSGPolygons([clipPolygon2]);
-    var csgClip3 = toCSGPolygons([clipPolygon3]);
-    var csgClip4 = toCSGPolygons([clipPolygon4]);
+    var csgSubject = CSG.fromPolygons([subjectPolygon]);
+    var csgClip = CSG.fromPolygons([clipPolygon]);
+    var csgClip2 = CSG.fromPolygons([clipPolygon2]);
+    var csgClip3 = CSG.fromPolygons([clipPolygon3]);
+    var csgClip4 = CSG.fromPolygons([clipPolygon4]);
 
     var clippedPolygon = csgSubject.union(csgClip);
     clippedPolygon = csgSubject.union(csgClip3);

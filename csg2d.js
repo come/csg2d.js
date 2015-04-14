@@ -62,9 +62,9 @@ CSG.fromPolygons = function(polygons) {
   var csg = new CSG();
   csg.segments = [];
   for (var i = 0; i < polygons.length; i++) {
-    for (var j = 0; j < polygons[i].vertices.length; j++) {
-      var k = (j+1)%(polygons[i].vertices.length);
-      csg.segments.push(new CSG.Segment([polygons[i].vertices[j],polygons[i].vertices[k]]));
+    for (var j = 0; j < polygons[i].length; j++) {
+      var k = (j+1)%(polygons[i].length);
+      csg.segments.push(new CSG.Segment([new CSG.Vector(polygons[i][j]), new CSG.Vector(polygons[i][k])]));
     }
   }
   return csg;
@@ -90,7 +90,7 @@ CSG.prototype = {
 
     var findNext = function(extremum) {
       for (var i = 0; i < list.length; i++) {
-        if (list[i].vertices[0].pos.squaredLengthTo(extremum) < 1) {
+        if (list[i].vertices[0].squaredLengthTo(extremum) < 1) {
           var result = list[i].clone();
           list.splice(i,1);
           return result;
@@ -102,14 +102,14 @@ CSG.prototype = {
     while(list.length > 0){
       polygons[currentIndex] = polygons[currentIndex] || [];
       if (polygons[currentIndex].length == 0) {
-        polygons[currentIndex].push(list[0].vertices[0].pos);
-        polygons[currentIndex].push(list[0].vertices[1].pos);
+        polygons[currentIndex].push(list[0].vertices[0]);
+        polygons[currentIndex].push(list[0].vertices[1]);
         list.splice(0,1);
       }
 
       var next = findNext(polygons[currentIndex][polygons[currentIndex].length-1]);
       if (next) {
-        polygons[currentIndex].push(next.vertices[1].pos);
+        polygons[currentIndex].push(next.vertices[1]);
       } else {
         currentIndex++;
       }
@@ -278,43 +278,6 @@ CSG.Vector.prototype = {
   }
 };
  
-// # class Vertex
-
-// Represents a vertex of a segment. Use your own vertex class instead of this
-// one to provide additional features like texture coordinates and vertex
-// colors. Custom vertex classes need to provide a `pos` property and `clone()`,
-// `flip()`, and `interpolate()` methods that behave analogous to the ones
-// defined by `CSG.Vertex`. This class provides `normal` so convenience
-// functions like `CSG.sphere()` can return a smooth vertex normal, but `normal`
-// is not used anywhere else.
-
-CSG.Vertex = function(pos, normal) {
-  this.pos = new CSG.Vector(pos);
-  this.normal = new CSG.Vector(normal);
-};
-
-CSG.Vertex.prototype = {
-  clone: function() {
-    return new CSG.Vertex(this.pos.clone(), this.normal.clone());
-  },
-
-  // Invert all orientation-specific data (e.g. vertex normal). Called when the
-  // orientation of a polygon is flipped.
-  flip: function() {
-    this.normal = this.normal.negated();
-  },
-
-  // Create a new vertex between this vertex and `other` by linearly
-  // interpolating all properties using a parameter of `t`. Subclasses should
-  // override this to interpolate additional properties.
-  interpolate: function(other, t) {
-    return new CSG.Vertex(
-      this.pos.lerp(other.pos, t),
-      this.normal.lerp(other.normal, t)
-    );
-  }
-};
-
 // # class line
 
 CSG.Line = function(origin, direction) {
@@ -356,7 +319,7 @@ CSG.Line.prototype = {
     var segmentType = 0;
     var types = [];
     for (var i = 0; i < segment.vertices.length; i++) {
-      var t = this.normal.dot(segment.vertices[i].pos.minus(this.origin));
+      var t = this.normal.dot(segment.vertices[i].minus(this.origin));
       var type = (t < -CSG.Line.EPSILON) ? RIGHT : (t > CSG.Line.EPSILON) ? LEFT : COLINEAR;
       segmentType |= type;
       types.push(type);
@@ -380,16 +343,16 @@ CSG.Line.prototype = {
         if (ti == RIGHT && tj == RIGHT) { r.push(vi); r.push(vj); }
         if (ti == LEFT && tj == LEFT) { l.push(vi); l.push(vj); }
         if (ti == RIGHT && tj == LEFT) {
-          var t = (this.normal.dot(this.origin.minus(vi.pos))) / this.normal.dot(vj.pos.minus(vi.pos));
-          var v = vi.interpolate(vj, t);
+          var t = (this.normal.dot(this.origin.minus(vi))) / this.normal.dot(vj.minus(vi));
+          var v = vi.lerp(vj, t);
           r.push(vi);
           r.push(v);
           l.push(v.clone());
           l.push(vj);
         }
         if (ti == LEFT && tj == RIGHT) {
-          var t = (this.normal.dot(this.origin.minus(vi.pos))) / this.normal.dot(vj.pos.minus(vi.pos));
-          var v = vi.interpolate(vj, t);
+          var t = (this.normal.dot(this.origin.minus(vi))) / this.normal.dot(vj.minus(vi));
+          var v = vi.lerp(vj, t);
           l.push(vi);
           l.push(v);
           r.push(v.clone());
@@ -407,35 +370,6 @@ CSG.Line.prototype = {
   }
 };
 
-// # class Polygon
-
-// Represents a convex polygon. The vertices used to initialize a polygon must
-// be coplanar and form a convex loop. They do not have to be `CSG.Vertex`
-// instances but they must behave similarly (duck typing can be used for
-// customization).
-// 
-// Each convex polygon has a `shared` property, which is shared between all
-// polygons that are clones of each other or were split from the same polygon.
-// This can be used to define per-polygon properties (such as surface color).
-
-CSG.Polygon = function(vertices, shared) {
-  this.vertices = vertices;
-  this.shared = shared;
-  this.line = CSG.Line.fromPoints(vertices[0].pos, vertices[1].pos);
-};
-
-CSG.Polygon.prototype = {
-  clone: function() {
-    var vertices = this.vertices.map(function(v) { return v.clone(); });
-    return new CSG.Polygon(vertices, this.shared);
-  },
-
-  flip: function() {
-    this.vertices.reverse().map(function(v) { v.flip(); });
-    this.line.flip();
-  }
-};
-
 // # class Segment
 
 // Represents a convex segment. The vertices used to initialize a segment must
@@ -450,7 +384,7 @@ CSG.Polygon.prototype = {
 CSG.Segment = function(vertices, shared) {
   this.vertices = vertices;
   this.shared = shared;
-  this.line = CSG.Line.fromPoints(vertices[0].pos, vertices[1].pos);
+  this.line = CSG.Line.fromPoints(vertices[0], vertices[1]);
 };
 
 CSG.Segment.prototype = {
@@ -460,7 +394,7 @@ CSG.Segment.prototype = {
   },
 
   flip: function() {
-    this.vertices.reverse().map(function(v) { v.flip(); });
+    this.vertices.reverse().map(function(v) { v.negated(); });
     this.line.flip();
   }
 };
