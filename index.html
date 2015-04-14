@@ -1,0 +1,46 @@
+<html>
+    <head>
+        <style>
+        body,html {
+            width:100%;
+            height:100%;
+        }
+        body,html,div{
+            margin:0;
+            padding:0;
+        }
+        #leftPanel {
+            width: calc(100% - 200px);
+            height: 100%;
+            float:left;
+            background: #fafafa;
+        }
+
+        #leftPanel canvas { width:100%;height: 100%}
+
+        #rightPanel {
+            width: 200px;
+            height: 100%;
+            float:right;
+            padding:20px 0px 20px 0px;
+        }
+
+        #rightPanel>div {
+            padding:0px 20px 0px 20px;
+            border-left:1px solid #ccc;
+            height: calc(100% - 40px);
+        }
+        </style>
+        <script src="csg2d.js"></script>
+        <script src="example.js"></script>
+    </head>
+    <body>
+        <div id="leftPanel">
+            <canvas id="canvas"></canvas>
+        </div>
+        <div id="rightPanel">
+            <div>
+            </div>
+        </div>
+    </body>    
+</html>
