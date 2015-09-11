@@ -99,7 +99,7 @@ CSG.prototype = {
       return false;
     }
     var currentIndex = 0;
-    while(list.length > 0){
+    while (list.length > 0) {
       polygons[currentIndex] = polygons[currentIndex] || [];
       if (polygons[currentIndex].length == 0) {
         polygons[currentIndex].push(list[0].vertices[0]);
@@ -144,7 +144,7 @@ CSG.prototype = {
     a.invert();
     return CSG.fromSegments(a.allSegments());
   },
-  
+
 
   // Return a new CSG solid representing space in this solid but not in the
   // solid `csg`. Neither this solid nor the solid `csg` are modified.
@@ -261,6 +261,10 @@ CSG.Vector.prototype = {
     return this.x * a.x + this.y * a.y;
   },
 
+  determinant: function(a) {
+    return this.x * a.y - this.y * a.x;
+  },
+
   lerp: function(a, t) {
     return this.plus(a.minus(this).times(t));
   },
@@ -277,28 +281,30 @@ CSG.Vector.prototype = {
     return (this.x - b.x)*(this.x - b.x) + (this.y - b.y)*(this.y - b.y);
   }
 };
- 
+
 // # class line
 
-CSG.Line = function(origin, direction) {
+CSG.Line = function(origin, direction, sl) {
   this.origin = origin;
   this.direction = direction;
   this.normal = (new CSG.Vector(this.direction.y, - this.direction.x));
+  this.sl = sl;
 };
 
 CSG.Line.EPSILON = 1e-5;
 
 CSG.Line.fromPoints = function(a, b) {
   var dir = b.minus(a).unit();
-  return new CSG.Line(a, dir);
+  return new CSG.Line(a, dir, b.squaredLengthTo(a));
 };
 
 CSG.Line.prototype = {
   clone: function() {
-    return new CSG.Line(this.origin.clone(), this.direction.clone());
+    return new CSG.Line(this.origin.clone(), this.direction.clone(), this.sl);
   },
 
   flip: function() {
+    this.origin = this.origin.plus(this.direction.times(Math.sqrt(this.sl)))
     this.direction = this.direction.negated();
     this.normal = this.normal.negated();
   },
@@ -319,10 +325,16 @@ CSG.Line.prototype = {
     var segmentType = 0;
     var types = [];
     for (var i = 0; i < segment.vertices.length; i++) {
-      var t = this.normal.dot(segment.vertices[i].minus(this.origin));
+      var sp = sp !== 0 ? segment.vertices[i].minus(this.origin).length() : 0;
+      var t = this.direction.determinant(segment.vertices[i].minus(this.origin));
       var type = (t < -CSG.Line.EPSILON) ? RIGHT : (t > CSG.Line.EPSILON) ? LEFT : COLINEAR;
       segmentType |= type;
       types.push(type);
+    }
+
+    if (types[0] == types[1] && types[0] == 0 && sp !== 0 && this.direction.dot(segment.line.direction) > 0 &&
+      segment.vertices[0].minus(this.origin.plus(this.direction.times(Math.sqrt(this.sl)))).dot(segment.vertices[1].minus(this.origin)) < 0) {
+      segmentType = SPANNING;
     }
 
     // Put the segment in the correct list, splitting it when necessary.
@@ -358,6 +370,16 @@ CSG.Line.prototype = {
           r.push(v.clone());
           r.push(vj);
         }
+        if (ti == COLINEAR && tj == COLINEAR) {
+          var v = this.origin.plus(this.direction.times(Math.sqrt(Math.min(this.origin.squaredLengthTo(vj), this.origin.squaredLengthTo(vi)))));
+          var vp = this.origin.plus(this.direction.times(Math.sqrt(Math.max(this.origin.squaredLengthTo(vj), this.origin.squaredLengthTo(vi)))));
+
+          l.push(this.origin.clone());
+          l.push(v);
+          r.push(v.clone());
+          r.push(vp);
+        }
+
         if (r.length >= 2) {
           right.push(new CSG.Segment(r, segment.shared));
         }
@@ -394,7 +416,7 @@ CSG.Segment.prototype = {
   },
 
   flip: function() {
-    this.vertices.reverse().map(function(v) { v.negated(); });
+    this.vertices.reverse();
     this.line.flip();
   }
 };
@@ -430,7 +452,7 @@ CSG.Node.prototype = {
     for (var i = 0; i < this.segments.length; i++) {
       this.segments[i].flip();
     }
-    this.line.flip();
+    if (this.line) this.line.flip();
     if (this.right) this.right.invert();
     if (this.left) this.left.invert();
     var temp = this.right;
