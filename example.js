@@ -2,7 +2,8 @@ var canvas, context,
 finalPolygons = [], 
 addPolygons = [],
 subtractPolygons = [],
-intersectPolygons = []
+intersectPolygons = [],
+debugPolygon = true
 ;
 
 var resize = function() {
@@ -172,6 +173,11 @@ var addPolygonList = document.getElementById("addList");
 var subtractPolygonList = document.getElementById("subtractList");
 var intersectPolygonList = document.getElementById("intersectList");
 
+var debugPolygonBtnOn = document.getElementById("debugPolygonBtnOn");
+var debugPolygonBtnOff = document.getElementById("debugPolygonBtnOff");
+debugPolygonBtnOn.addEventListener('click',function(){debugPolygon=true});
+debugPolygonBtnOff.addEventListener('click',function(){debugPolygon=false});
+
 var generateRandomPolygon = function() {
     var amount = 30/100*Math.min(canvas.width, canvas.height);
     if (Math.random() < 0.5) { //triangle
@@ -250,6 +256,23 @@ function render(){
 
     context.clearRect(0,0,canvas.width, canvas.height);
 
+
+
+    if (debugPolygon) {
+        //drawPolygon(context, selected, '#009900', '#066', true);
+        for (var i = 0; i < addPolygons.length; i++) {
+            drawPolygon(context, addPolygons[i], '#009900', '#f0f', true);
+        }
+        for (var i = 0; i < subtractPolygons.length; i++) {
+            drawPolygon(context, subtractPolygons[i], '#990000', '#0ff', true);
+        }
+        for (var i = 0; i < intersectPolygons.length; i++) {
+            drawPolygon(context, intersectPolygons[i], '#000099', '#ff0', true);
+        }
+    }
+
+
+
     if (addPolygons.length == 0) { return;}
     
     var addPolygon = CSG.fromPolygons([addPolygons[0]]);
@@ -286,22 +309,6 @@ function render(){
     finalPolygons.sort(function(a, b) {
         return area(b) - area(a);
     })
-
-
-
-    if (true) {
-        //drawPolygon(context, selected, '#009900', '#066', true);
-        for (var i = 0; i < addPolygons.length; i++) {
-            drawPolygon(context, addPolygons[i], '#009900', '#f0f', true);
-        }
-        for (var i = 0; i < subtractPolygons.length; i++) {
-            drawPolygon(context, subtractPolygons[i], '#990000', '#0ff', true);
-        }
-        for (var i = 0; i < intersectPolygons.length; i++) {
-            drawPolygon(context, intersectPolygons[i], '#000099', '#ff0', true);
-        }
-    }
-
 
     for (var i = 0; i < finalPolygons.length; i++) {
         drawPolygon(context, finalPolygons[i], '#888', 'rgba(0,255,255,0.7)');
