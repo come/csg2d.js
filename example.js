@@ -11,7 +11,7 @@ var resize = function() {
     context = canvas.getContext("2d");
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
-    //load();
+   // load();
 }
 
 window.addEventListener("resize", resize);
@@ -96,27 +96,25 @@ function drawPolygon(context, polygon, strokeStyle, fillStyle, dashed) {
 
 var load = function() {
     addPolygons.push([
-        [10, 10],
-        [400, 10],
-        [50, 200]
+        [canvas.width/2-100, canvas.height/2-100],
+        [canvas.width/2+100, canvas.height/2-100],
+        [canvas.width/2, canvas.height/2+100]
     ]);
 
     addPolygons.push([
-        [10, 100],
-        [50, 10],
-        [100, 100]
+        [canvas.width/2-75, canvas.height/2-75],
+        [canvas.width/2+125, canvas.height/2-75],
+        [canvas.width/2, canvas.height/2+125]
     ]);
 
     subtractPolygons.push([
-        [20, 20],
-        [80, 20],
-        [50, 120]
+        [canvas.width/2-50, canvas.height/2-50],
+        [canvas.width/2+150, canvas.height/2-50],
+        [canvas.width/2, canvas.height/2+150]
     ]);
 
 
     return;
-
-    
 }
 
 var getTargeted = function(x,y) {
