@@ -59,10 +59,11 @@ var isPointInPolygon = function(points, x, y) {
 
 function drawPolygon(context, polygon, strokeStyle, fillStyle, dashed) {
     var a = area(polygon);
+    var dontfill = false;
     context.save();
     if (a < 0 && !dashed) { // polygon is reversed (it is a hole)
         context.fillStyle = "#fafafa";
-        context.strokeStyle = "#FF0000";
+        context.strokeStyle = "#0000FF";
     } else {
         context.fillStyle = fillStyle;
         context.strokeStyle = strokeStyle;
