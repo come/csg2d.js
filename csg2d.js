@@ -328,7 +328,15 @@ CSG.Line.prototype = {
     // Put the segment in the correct list, splitting it when necessary.
     switch (segmentType) {
       case COLINEAR:
-        (t > 0 ? colinearRight : colinearLeft).push(segment);
+          if( t!= 0) {
+            (t > 0 ? colinearRight : colinearLeft).push(segment);
+          } else {
+            if(segment.line.origin.x < this.origin.x) {
+                colinearLeft.push(segment)
+            } else {
+                colinearRight.push(segment)
+            }
+          }
         break;
       case RIGHT:
         right.push(segment);
