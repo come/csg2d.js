@@ -87,7 +87,7 @@ function drawPolygon(context, polygon, strokeStyle, fillStyle, dashed) {
             for (var i = 1; i < polygon.length; i++) {
                 context.lineTo(polygon[i][0] + .5, polygon[i][1] + .5);
             }
-            //context.closePath();
+            context.closePath();
             context.stroke();
         context.restore();
     }
