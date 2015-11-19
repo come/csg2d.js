@@ -11,7 +11,11 @@ var resize = function() {
     context = canvas.getContext("2d");
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
+<<<<<<< HEAD
     //load();
+=======
+    load();
+>>>>>>> master
 }
 
 window.addEventListener("resize", resize);
@@ -76,7 +80,11 @@ function drawPolygon(context, polygon, strokeStyle, fillStyle, dashed) {
             for (var i = 1; i < polygon.length; i++) {
                 context.lineTo(polygon[i].x + .5, polygon[i].y + .5);
             }
+<<<<<<< HEAD
             context.closePath();
+=======
+           // context.closePath();
+>>>>>>> master
             context.fill();
             context.stroke();
         context.restore();
@@ -87,7 +95,11 @@ function drawPolygon(context, polygon, strokeStyle, fillStyle, dashed) {
             for (var i = 1; i < polygon.length; i++) {
                 context.lineTo(polygon[i][0] + .5, polygon[i][1] + .5);
             }
+<<<<<<< HEAD
             context.closePath();
+=======
+            //context.closePath();
+>>>>>>> master
             context.stroke();
         context.restore();
     }
@@ -95,6 +107,7 @@ function drawPolygon(context, polygon, strokeStyle, fillStyle, dashed) {
 }
 
 var load = function() {
+<<<<<<< HEAD
     addPolygons.push([
         [10, 10],
         [400, 10],
@@ -117,6 +130,17 @@ var load = function() {
     return;
 
     
+=======
+    addPolygons.push(generateRandomPolygon());
+
+    addPolygons.push(generateRandomPolygon());
+    
+    subtractPolygons.push(generateRandomPolygon());
+
+    updateLists();
+    render();
+    return;
+>>>>>>> master
 }
 
 var getTargeted = function(x,y) {
@@ -310,6 +334,11 @@ function render(){
         return area(b) - area(a);
     })
 
+<<<<<<< HEAD
+=======
+  //  console.log(resultPolygon, finalPolygons);
+
+>>>>>>> master
     for (var i = 0; i < finalPolygons.length; i++) {
         drawPolygon(context, finalPolygons[i], '#888', 'rgba(0,255,255,0.7)');
     }
