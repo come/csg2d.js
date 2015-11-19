@@ -11,7 +11,7 @@ var resize = function() {
     context = canvas.getContext("2d");
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
-    //load();
+    load();
 }
 
 window.addEventListener("resize", resize);
@@ -76,7 +76,7 @@ function drawPolygon(context, polygon, strokeStyle, fillStyle, dashed) {
             for (var i = 1; i < polygon.length; i++) {
                 context.lineTo(polygon[i].x + .5, polygon[i].y + .5);
             }
-            context.closePath();
+           // context.closePath();
             context.fill();
             context.stroke();
         context.restore();
@@ -87,7 +87,7 @@ function drawPolygon(context, polygon, strokeStyle, fillStyle, dashed) {
             for (var i = 1; i < polygon.length; i++) {
                 context.lineTo(polygon[i][0] + .5, polygon[i][1] + .5);
             }
-            context.closePath();
+            //context.closePath();
             context.stroke();
         context.restore();
     }
@@ -95,28 +95,15 @@ function drawPolygon(context, polygon, strokeStyle, fillStyle, dashed) {
 }
 
 var load = function() {
-    addPolygons.push([
-        [10, 10],
-        [400, 10],
-        [50, 200]
-    ]);
+    addPolygons.push(generateRandomPolygon());
 
-    addPolygons.push([
-        [10, 100],
-        [50, 10],
-        [100, 100]
-    ]);
-
-    subtractPolygons.push([
-        [20, 20],
-        [80, 20],
-        [50, 120]
-    ]);
-
-
-    return;
-
+    addPolygons.push(generateRandomPolygon());
     
+    subtractPolygons.push(generateRandomPolygon());
+
+    updateLists();
+    render();
+    return;
 }
 
 var getTargeted = function(x,y) {
