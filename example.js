@@ -11,7 +11,6 @@ var resize = function() {
     context = canvas.getContext("2d");
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
-    load();
 }
 
 window.addEventListener("resize", resize);
@@ -106,6 +105,8 @@ var load = function() {
     render();
     return;
 }
+
+window.addEventListener("load", load);
 
 var getTargeted = function(x,y) {
 
@@ -244,8 +245,6 @@ function render(){
 
     context.clearRect(0,0,canvas.width, canvas.height);
 
-
-
     if (debugPolygon) {
         //drawPolygon(context, selected, '#009900', '#066', true);
         for (var i = 0; i < addPolygons.length; i++) {
@@ -258,8 +257,6 @@ function render(){
             drawPolygon(context, intersectPolygons[i], '#000099', '#ff0', true);
         }
     }
-
-
 
     if (addPolygons.length == 0) { return;}
     
