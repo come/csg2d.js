@@ -1,6 +1,6 @@
 {
   "name": "csg2d",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A 2D port of CSG 3D library",
   "main": "csg2d.js",
   "scripts": {
