@@ -27,3 +27,5 @@ return [
 # Example
 
 http://come.github.io/csg2d.js/
+
+![screenshot](http://come.github.io/csg2d.js/screen.png)
