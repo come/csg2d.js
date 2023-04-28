@@ -458,7 +458,7 @@
       node.line = this.line && this.line.clone();
       node.right = this.right && this.right.clone();
       node.left = this.left && this.left.clone();
-      note.segments = this.segments.map(function(p) {
+      node.segments = this.segments.map(function(p) {
         return p.clone();
       });
       return node;
